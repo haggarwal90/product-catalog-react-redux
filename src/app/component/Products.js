@@ -2,10 +2,11 @@
  * Created by himanshu on 26/4/17.
  */
 import React from "react";
-import { CreateProduct } from "./CreateProduct";
+import CreateProduct  from "./CreateProduct";
 import ReactTable from 'react-table';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { browserHistory } from "react-router";
+import { connect } from "react-redux";
 
 // Create some column definitions
 const columns = [{
@@ -19,55 +20,50 @@ const columns = [{
     }]
 }];
 
-const selectRowProp = {
+/*const selectRowProp = {
     mode: 'radio'
-};
+};*/
 
-export class Products extends React.Component {
+class Products extends React.Component {
     constructor(props) {
         super();
-        let products = JSON.parse(localStorage.getItem('Products'));
-        if(!products) {
-            products = [{"name":"Product one","description":"Product one description"},{"name":"Product two","description":"Product two description"},{"name":"Product three","description":"Product three description"}];
-            localStorage.setItem('Products',JSON.stringify(products));
-        }
-        this.state = {
-            products : products,
-            product : {
-                name : "",
-                description : ""
-            },
-            buttonlabel : "Add Product"
-        };
     }
 
     editProducts(product) {
-        let tempproducts = this.state.products;
-        if (this.state.buttonlabel == 'Add Product') {
+        console.log('product is ',JSON.stringify(product));
+        let tempproducts = this.props.products;
+        if (this.props.buttonlabel == 'Add Product') {
             /*let product = {
                 name : "Product one",
                 description : "Product one description"
             };*/
 
             tempproducts.push(product);
-            this.setState({
+            /*this.setState({
                 products: tempproducts
-            });
+            });*/
+            this.props.setProducts(tempproducts);
         } else {
-            tempproducts[this.state.product.location] = product;
-            this.setState({
+            tempproducts[this.props.product.location] = product;
+            /*this.setState({
                 products: tempproducts
-            });
+            });*/
+            this.props.setProducts(tempproducts);
         }
+        console.log('tempproducts is ',JSON.stringify(tempproducts));
         localStorage.setItem('Products',JSON.stringify(tempproducts));
 
-        this.setState({
+        /*this.setState({
             product : {
                 name : "",
                 description : ""
             },
             buttonlabel : "Add Product"
-        });
+        });*/
+        this.props.setProduct({
+            name : "",
+            description : ""
+        },"Add Product");
 
         this.forceUpdateHandler();
     }
@@ -82,18 +78,15 @@ export class Products extends React.Component {
         });*/
     };
 
-    editProductSample(product) {
-        console.log('editProductSample iss called',product);
-
-    }
-
     getProduct(index) {
-        let product = this.state.products[index];
+        let product = this.props.products[index];
         product.location = index;
-        this.setState({
+        // reducer to set product
+        /*this.setState({
             product: product,
             buttonlabel : "Edit Product"
-        });
+        });*/
+        this.props.setProduct(product,"Edit Product");
         console.log('Edit Product called ', index, product);
 
     }
@@ -119,33 +112,57 @@ export class Products extends React.Component {
                     <h3>Play with the products</h3>
                     <ReactTable
                         className='-striped -highlight'
-                        data={this.state.products}
+                        data={this.props.products}
                         columns={columns}
                         defaultPageSize={5}
                         getTdProps={(state, rowInfo, column, instance) => {
                             return {
                                 onClick: e => {
-                                   //console.log('A Td Element was clicked!')
-                                   //console.log('it produced this event:', e)
                                     console.log('It was in this column:', column)
                                     console.log('It was in this row:', rowInfo)
-                                    //console.log('It was in this table instance:', instance)
                                     this.getProduct(rowInfo.index)
                                 }
                             }
                         }}
                     />
-                    {/*<BootstrapTable data={this.state.products} selectRow={ selectRowProp } striped hover>
-                        <TableHeaderColumn isKey={true} dataField='name'>Product Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField='description'>Product Description</TableHeaderColumn>
-                    </BootstrapTable>*/}
-                   {/* <ul>
-                        {this.state.products.map((product, index) => <li style={{cursor:'pointer'}} key={index} onClick={(event) => this.getProduct(index)}>{product.name}</li>)}
-                    </ul>*/}
                 </div>
                 <hr/>
-                <CreateProduct product={this.state.product} buttonlabel={this.state.buttonlabel} editproductmethod={this.editProducts.bind(this)}/>
+                {/*<CreateProduct product={this.props.product} buttonlabel={this.props.buttonlabel} editproductmethod={this.editProducts.bind(this)}/>*/}
+                <CreateProduct buttonlabel={this.props.buttonlabel} editproductmethod={this.editProducts.bind(this)}/>
             </div>
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        products : state.ProductReducer.products,
+        product : state.ProductReducer.product,
+        buttonlabel : state.ProductReducer.buttonlabel
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setProduct: (product, label) => {
+            dispatch({
+                type: "SET_PRODUCT",
+                payload: {
+                    product: product,
+                    buttonlabel : label
+                }
+            });
+        },
+        setProducts: (products) => {
+            dispatch({
+                type: "SET_PRODUCTS",
+                payload: {
+                    products: products
+                }
+            });
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
+

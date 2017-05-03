@@ -5,49 +5,30 @@ import React from "react";
 import { View } from "./View";
 import { Link, browserHistory } from "react-router";
 import Modal from 'react-modal';
-
+import {connect} from "react-redux";
 //Statefull
-export class Header extends React.Component {
-    constructor(props) {
-        super();
-
-        let validated = localStorage.getItem('Validated');
-        console.log('validated is ',validated);
-        if(!validated) {
-            validated = false;
-        }
-        this.state = {
-            email : "",
-            password : "",
-            validated  : validated,
-            openModal : false
-        }
-        localStorage.setItem('Validated',this.state.validated);
-    }
-
+class Header extends React.Component {
 
     inputEmail(event) {
-        this.setState({
-            email: event.target.value
-        })
+        this.props.setEmail(event.target.value);
     }
 
     inputPassword(event) {
-        this.setState({
-            password: event.target.value
-        })
+        this.props.setPassword(event.target.value);
     }
 
     validate() {
-        if(this.state.email == 'himanshu' && this.state.password == 'himanshu') {
-            this.setState({
+        if(this.props.email == 'himanshu' && this.props.password == 'himanshu') {
+            /*this.setState({
                 validated: true,
                 openModal : !this.state.openModal
             }, function() {
                 console.log('this.state.validated ',this.state.validated);
                 localStorage.setItem('Validated',this.state.validated);
-            })
-            this.props.onHeaderChange('Logout');
+            })*/
+            this.props.setValidated(!this.props.validated, !this.props.openModal);
+            debugger;
+            //this.props.onHeaderChange('Logout');
             //browserHistory.push('/');
         }
 
@@ -103,14 +84,16 @@ export class Header extends React.Component {
         /*this.setState({
             headername : 'Login'
         })*/
-        this.props.onHeaderChange('Login');
+        this.props.setValidated(!this.props.validated, false);
+        //this.props.onHeaderChange('Login');
         browserHistory.push('/');
     }
 
-    login() {
+    login() {/*
         this.setState({
             openModal : !this.state.openModal
-        })
+        })*/
+        this.props.toggleModal(!this.props.openModal);
 
     }
 
@@ -135,7 +118,7 @@ export class Header extends React.Component {
                     </div>
                 </nav>
                 <Modal
-                    isOpen={this.state.openModal}
+                    isOpen={this.props.openModal}
                     contentLabel="Modal">
                     <div>
                         <div className="form-group">
@@ -154,6 +137,49 @@ export class Header extends React.Component {
         )
     }
 }
+
+
+const mapStateToProps = (state) => {
+    console.log('state is ', state);
+    return {
+        email: state.HeaderReducer.email,
+        password : state.HeaderReducer.password,
+        validated  : state.HeaderReducer.validated,
+        openModal : state.HeaderReducer.openModal
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        toggleModal: (openmodal) => {
+            dispatch({
+                type: "TOGGLE_MODAL",
+                payload: openmodal
+            })
+        },
+        setValidated: (validated, openmodal) => {
+            debugger;
+            dispatch({
+                type: "VALIDATED",
+                payload: {validated, openmodal}
+            })
+        },
+        setEmail: (email) => {
+            dispatch({
+                type: "SET_EMAIL",
+                payload: email
+            })
+        },
+        setPassword: (password) => {
+            dispatch({
+                type: "SET_PASSWORD",
+                payload: password
+            })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 //Stateless
 

@@ -2,29 +2,29 @@
  * Created by himanshu on 26/4/17.
  */
 import React from "react";
-import { Header } from "./Header";
+import Header from "./Header";
 import { Home } from "./Home";
-import { Login } from "./Login";
 import Modal from 'react-modal';
+import {connect} from "react-redux";
 
 
-export class Root extends React.Component {
+class Root extends React.Component {
 
-    constructor() {
+    /*constructor() {
         super();
         let validated = localStorage.getItem('Validated');
         var isTrue = (validated == 'true' || validated == true);
         this.state = {
             headername: isTrue? 'Logout' : 'Login'
         }
-    }
+    }*/
 
-    onChangeHeaderName(newName) {
+    /*onChangeHeaderName(newName) {
         console.log('New Name is ',newName);
         this.setState({
             headername: newName
         })
-    }
+    }*/
     // Overriding render
     render() {
         console.log('this.props.children ',this.props);
@@ -49,7 +49,8 @@ export class Root extends React.Component {
                 <div className="container">
                     <div className="row">
                         <div className="col">
-                            <Header headername={this.state.headername} onHeaderChange={this.onChangeHeaderName.bind(this)}/>
+                            {/*<Header headername={this.state.headername} onHeaderChange={this.onChangeHeaderName.bind(this)}/>*/}
+                            <Header headername={this.props.headername}/>
                         </div>
                     </div>
 
@@ -63,3 +64,19 @@ export class Root extends React.Component {
         //}
     }
 }
+
+
+const mapStateToProps = (state) => {
+    console.log('root state is ', state);
+    let validated = state.HeaderReducer.validated;
+    var isTrue = (validated == 'true' || validated == true);
+    return {
+        headername: isTrue? "Logout" : "Login"
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Root);
