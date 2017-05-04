@@ -3,6 +3,7 @@
  */
 import React from "react";
 import {connect} from "react-redux";
+import {View} from "./View";
 
 class CreateProduct extends React.Component {
 
@@ -38,6 +39,11 @@ class CreateProduct extends React.Component {
         this.props.editproductmethod(this.props.product);
     }
 
+    deleteProduct(input) {
+        //console.log('this.state.childproduct ',this.state.childproduct);
+        debugger;
+        this.props.deletProductMethod(this.props.product);
+    }
 
     render() {
         /*let productnameInput,productdescriptionInput = null;*/
@@ -63,7 +69,12 @@ class CreateProduct extends React.Component {
                     </div>
                 </div>
                 <button onClick={this.editproductmethod.bind(this)}
-                        className="primary">{this.props.buttonlabel}</button>
+                        className="btn btn-primary">{this.props.buttonlabel}</button>
+                <View show={this.props.buttonlabel == 'Edit Product'}>
+                    <button onClick={this.deleteProduct.bind(this)}
+                            className="btn btn-primary" style={{margin: "1%"}}>Delete Product
+                    </button>
+                </View>
                 {/*<form onSubmit={e => {
                  // Prevent request
                  e.preventDefault();

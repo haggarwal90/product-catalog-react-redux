@@ -2,23 +2,23 @@
  * Created by himanshu on 26/4/17.
  */
 import React from "react";
-import { browserHistory } from "react-router";
+import {browserHistory} from "react-router";
 
 export class Login extends React.Component {
 
     constructor() {
         super();
         let validated = localStorage.getItem('Validated');
-        console.log('validated is ',validated);
-        if(!validated) {
+        console.log('validated is ', validated);
+        if (!validated) {
             validated = false;
         }
         this.state = {
-            email : "",
-            password : "",
-            validated  : validated
+            email: "",
+            password: "",
+            validated: validated
         }
-        localStorage.setItem('Validated',this.state.validated);
+        localStorage.setItem('Validated', this.state.validated);
     }
 
     inputEmail(event) {
@@ -34,12 +34,12 @@ export class Login extends React.Component {
     }
 
     validate() {
-        if(this.state.email == 'himanshu' && this.state.password == 'himanshu') {
+        if (this.state.email == 'himanshu' && this.state.password == 'himanshu') {
             this.setState({
                 validated: true
-            }, function() {
-                console.log('this.state.validated ',this.state.validated);
-                localStorage.setItem('Validated',this.state.validated);
+            }, function () {
+                console.log('this.state.validated ', this.state.validated);
+                localStorage.setItem('Validated', this.state.validated);
             })
             this.props.onHeaderChange('Logout');
             //browserHistory.push('/');
@@ -48,10 +48,9 @@ export class Login extends React.Component {
     }
 
 
-
     render() {
         var isTrue = (this.state.validated == 'true' || this.state.validated == true);
-        if(isTrue) {
+        if (isTrue) {
             return (
                 <div>Successfully Logged in!!</div>
             )

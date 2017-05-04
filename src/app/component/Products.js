@@ -5,8 +5,8 @@ import React from "react";
 import CreateProduct  from "./CreateProduct";
 import ReactTable from 'react-table';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import { browserHistory } from "react-router";
-import { connect } from "react-redux";
+import {browserHistory} from "react-router";
+import {connect} from "react-redux";
 
 // Create some column definitions
 const columns = [{
@@ -21,8 +21,8 @@ const columns = [{
 }];
 
 /*const selectRowProp = {
-    mode: 'radio'
-};*/
+ mode: 'radio'
+ };*/
 
 class Products extends React.Component {
     constructor(props) {
@@ -30,52 +30,72 @@ class Products extends React.Component {
     }
 
     editProducts(product) {
-        console.log('product is ',JSON.stringify(product));
+        console.log('product is ', JSON.stringify(product));
         let tempproducts = this.props.products;
         if (this.props.buttonlabel == 'Add Product') {
             /*let product = {
-                name : "Product one",
-                description : "Product one description"
-            };*/
+             name : "Product one",
+             description : "Product one description"
+             };*/
 
             tempproducts.push(product);
             /*this.setState({
-                products: tempproducts
-            });*/
+             products: tempproducts
+             });*/
             this.props.setProducts(tempproducts);
         } else {
             tempproducts[this.props.product.location] = product;
             /*this.setState({
-                products: tempproducts
-            });*/
+             products: tempproducts
+             });*/
             this.props.setProducts(tempproducts);
         }
-        console.log('tempproducts is ',JSON.stringify(tempproducts));
-        localStorage.setItem('Products',JSON.stringify(tempproducts));
+        console.log('tempproducts is ', JSON.stringify(tempproducts));
+        localStorage.setItem('Products', JSON.stringify(tempproducts));
 
         /*this.setState({
-            product : {
-                name : "",
-                description : ""
-            },
-            buttonlabel : "Add Product"
-        });*/
+         product : {
+         name : "",
+         description : ""
+         },
+         buttonlabel : "Add Product"
+         });*/
         this.props.setProduct({
-            name : "",
-            description : ""
-        },"Add Product");
+            name: "",
+            description: ""
+        }, "Add Product");
 
         this.forceUpdateHandler();
     }
 
-    forceUpdateHandler(){
+    deleteProducts(product) {
+        console.log('deleteProducts is ', JSON.stringify(product));
+        let tempproducts = this.props.products;
+        let location = product.location;
+        debugger;
+        if (location) {
+            tempproducts.splice(location, 1);
+            this.props.setProducts(tempproducts);
+
+            localStorage.setItem('Products', JSON.stringify(tempproducts));
+
+            this.props.setProduct({
+                name: "",
+                description: ""
+            }, "Add Product");
+
+            this.forceUpdateHandler();
+        }
+    }
+
+    forceUpdateHandler() {
         //browserHistory.push("/products");
         window.location.reload();
         /*console.log('Forceupdatehandler calling');
-        this.forceUpdate(function() {
-            this.render();
-            console.log('Forceupdatehandler called');
-        });*/
+         this.forceUpdate(function() {
+         this.render();
+         console.log('Forceupdatehandler called');
+         });*/
     };
 
     getProduct(index) {
@@ -83,29 +103,29 @@ class Products extends React.Component {
         product.location = index;
         // reducer to set product
         /*this.setState({
-            product: product,
-            buttonlabel : "Edit Product"
-        });*/
-        this.props.setProduct(product,"Edit Product");
+         product: product,
+         buttonlabel : "Edit Product"
+         });*/
+        this.props.setProduct(product, "Edit Product");
         console.log('Edit Product called ', index, product);
 
     }
 
     render() {
         /*var products = [
-            {
-                name : "Product one",
-                description : "Product one description"
-            },
-            {
-                name : "Product two",
-                description : "Product two description"
-            },
-            {
-                name : "Product three",
-                description : "Product three description"
-            }
-        ];*/
+         {
+         name : "Product one",
+         description : "Product one description"
+         },
+         {
+         name : "Product two",
+         description : "Product two description"
+         },
+         {
+         name : "Product three",
+         description : "Product three description"
+         }
+         ];*/
         return (
             <div>
                 <div>
@@ -128,7 +148,8 @@ class Products extends React.Component {
                 </div>
                 <hr/>
                 {/*<CreateProduct product={this.props.product} buttonlabel={this.props.buttonlabel} editproductmethod={this.editProducts.bind(this)}/>*/}
-                <CreateProduct buttonlabel={this.props.buttonlabel} editproductmethod={this.editProducts.bind(this)}/>
+                <CreateProduct buttonlabel={this.props.buttonlabel} editproductmethod={this.editProducts.bind(this)}
+                               deletProductMethod={this.deleteProducts.bind(this)}/>
             </div>
         );
     }
@@ -136,9 +157,9 @@ class Products extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        products : state.ProductReducer.products,
-        product : state.ProductReducer.product,
-        buttonlabel : state.ProductReducer.buttonlabel
+        products: state.ProductReducer.products,
+        product: state.ProductReducer.product,
+        buttonlabel: state.ProductReducer.buttonlabel
     }
 }
 
@@ -149,7 +170,7 @@ const mapDispatchToProps = (dispatch) => {
                 type: "SET_PRODUCT",
                 payload: {
                     product: product,
-                    buttonlabel : label
+                    buttonlabel: label
                 }
             });
         },

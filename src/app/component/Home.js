@@ -18,6 +18,6 @@ export class Home extends React.Component {
 
 // Good Practice to have propTypes, it gives error in console but wont break the functionality
 /*
-Home.propTypes = {
-    products : React.PropTypes.array
-}*/
+ Home.propTypes = {
+ products : React.PropTypes.array
+ }*/

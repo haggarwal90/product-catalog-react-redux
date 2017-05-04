@@ -56,6 +56,6 @@ export const ProductReducer = (state = {
             }
             break;
     }
-    console.log('new state  is ',JSON.stringify(state));
+    console.log('new state  is ', JSON.stringify(state));
     return state;
 }
